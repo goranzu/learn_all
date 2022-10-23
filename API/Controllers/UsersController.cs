@@ -6,9 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-[ApiController]
 [Route("api/users")]
-public class UsersController : ControllerBase
+public sealed class UsersController : BaseController
 {
     private readonly DataContext _dataContext;
 

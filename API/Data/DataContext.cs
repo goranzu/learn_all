@@ -13,21 +13,21 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AppUser>().HasData(
-        new AppUser()
-        {
-            Id = 1,
-            Username = "goran"
-        },
-        new AppUser()
-        {
-            Id = 2,
-            Username = "liam"
-        },
-        new AppUser()
-        {
-            Id = 3,
-            Username = "tijana"
-        });
+        // modelBuilder.Entity<AppUser>().HasData(
+        // new AppUser()
+        // {
+        //     Id = 1,
+        //     Username = "goran"
+        // },
+        // new AppUser()
+        // {
+        //     Id = 2,
+        //     Username = "liam"
+        // },
+        // new AppUser()
+        // {
+        //     Id = 3,
+        //     Username = "tijana"
+        // });
     }
 }
