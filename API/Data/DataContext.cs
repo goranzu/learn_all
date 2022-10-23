@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using API.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,21 +15,29 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // modelBuilder.Entity<AppUser>().HasData(
-        // new AppUser()
-        // {
-        //     Id = 1,
-        //     Username = "goran"
-        // },
-        // new AppUser()
-        // {
-        //     Id = 2,
-        //     Username = "liam"
-        // },
-        // new AppUser()
-        // {
-        //     Id = 3,
-        //     Username = "tijana"
-        // });
+        using var hmac = new HMACSHA512();
+        
+        modelBuilder.Entity<AppUser>().HasData(
+        new AppUser()
+        {
+            Id = 1,
+            Username = "goran",
+            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("goran")),
+            PasswordSalt = hmac.Key
+        },
+        new AppUser()
+        {
+            Id = 2,
+            Username = "liam",
+            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("liam")),
+            PasswordSalt = hmac.Key
+        },
+        new AppUser()
+        {
+            Id = 3,
+            Username = "tijana",
+            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("tijana")),
+            PasswordSalt = hmac.Key
+        });
     }
 }
