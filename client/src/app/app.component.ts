@@ -1,6 +1,6 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { catchError, Observable, of, throwError } from 'rxjs';
+import { User } from './_models/user';
+import { AccountService } from './_services/account.service';
 
 @Component({
   selector: 'app-root',
@@ -11,35 +11,18 @@ export class AppComponent implements OnInit {
   title = 'The Dating App';
   users: User[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private accountService: AccountService) {}
 
   ngOnInit() {
-    this.getUsers().subscribe((data) => (this.users = data));
+    this.setCurrentUser();
   }
 
-  getUsers() {
-    return this.http
-      .get<User[]>('https://localhost:5001/api/users')
-      .pipe(catchError(this.handleError));
-  }
-
-  handleError(error: HttpErrorResponse) {
-    if (error.status === 0) {
-      console.error('An error occurred: ', error.error);
-    } else {
-      console.error(
-        `Backend returned code ${error.status}, body was`,
-        error.error
-      );
+  setCurrentUser() {
+    const userFromStorage = localStorage.getItem(this.accountService.userKey);
+    if (userFromStorage == null) {
+      throw new Error('User is null');
     }
-
-    return throwError(
-      () => new Error('Something bad happened; please try again later.')
-    );
+    const user: User = JSON.parse(userFromStorage);
+    this.accountService.setCurrentUser(user);
   }
-}
-
-export interface User {
-  id: number;
-  username: string;
 }
