@@ -9,30 +9,16 @@ import { User } from '../_models/user';
 })
 export class HomeComponent implements OnInit {
   registerMode = false;
-  users: User[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor() {}
 
-  ngOnInit(): void {
-    this.getUsers();
-  }
+  ngOnInit(): void {}
 
   onRegisterClick() {
     this.registerMode = !this.registerMode;
   }
 
-  onCancel() {
-    console.log('cancel');
-  }
-
-  getUsers() {
-    this.http.get<User[]>('https://localhost:5001/api/users').subscribe({
-      next: (response) => {
-        this.users = response;
-      },
-      error: (error) => {
-        console.error(error);
-      },
-    });
+  onCancel(event: boolean) {
+    this.registerMode = event;
   }
 }

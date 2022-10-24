@@ -1,7 +1,8 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, ReplaySubject, throwError } from 'rxjs';
-import { ILogin } from '../nav/nav.component';
+import { ILogin } from '../_models/ILogin';
+import { IRegister } from '../_models/IRegister';
 import { User } from '../_models/user';
 
 @Injectable({
@@ -15,29 +16,37 @@ export class AccountService {
 
   constructor(private http: HttpClient) {}
 
-  login(model: ILogin) {
+  login = (model: ILogin) => {
     return this.http
       .post<User>(`${this.baseUrl}/accounts/login`, model)
-      .pipe(
-        map((response) => {
-          const user = response;
-          if (user) {
-            localStorage.setItem(this.userKey, JSON.stringify(user));
-            this._currentUserSource.next(user);
-          }
-        })
-      )
+      .pipe(map(this.setUserInLocalStorage))
       .pipe(catchError(this.handleErrors));
-  }
+  };
 
-  logout() {
+  register = (model: IRegister) => {
+    return this.http
+      .post<User>(`${this.baseUrl}/accounts/register`, model)
+      .pipe(map(this.setUserInLocalStorage))
+      .pipe(catchError(this.handleErrors));
+  };
+
+  logout = () => {
     localStorage.removeItem(this.userKey);
     this._currentUserSource.next(null);
-  }
+  };
 
-  setCurrentUser(user: User) {
+  setCurrentUser = (user: User) => {
     this._currentUserSource.next(user);
-  }
+  };
+
+  private setUserInLocalStorage = (response: User) => {
+    const user = response;
+    if (user) {
+      localStorage.setItem(this.userKey, JSON.stringify(user));
+      this._currentUserSource.next(user);
+    }
+    return user;
+  };
 
   private handleErrors(error: HttpErrorResponse) {
     if (error.status === 0) {
@@ -47,6 +56,7 @@ export class AccountService {
         `Backend returned code ${error.status}, body was`,
         error.error
       );
+      console.error(error);
     }
 
     return throwError(

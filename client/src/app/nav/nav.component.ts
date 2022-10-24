@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../_services/account.service';
+import { ILogin } from '../_models/ILogin';
 
 @Component({
   selector: 'app-nav',
@@ -25,9 +26,4 @@ export class NavComponent implements OnInit {
   logout() {
     this.accountService.logout();
   }
-}
-
-export interface ILogin {
-  username: string;
-  password: string;
 }
