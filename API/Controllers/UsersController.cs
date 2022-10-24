@@ -1,5 +1,6 @@
 using API.Data;
 using API.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ public sealed class UsersController : BaseController
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
     {
         var users = await _dataContext.Users
@@ -25,6 +27,7 @@ public sealed class UsersController : BaseController
     }
 
     [HttpGet("{id:int}")]
+    [Authorize]
     public async Task<ActionResult<AppUser>> GetUser(int id)
     {
         var user = await _dataContext.Users
