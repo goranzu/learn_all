@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { catchError, map, ReplaySubject, throwError } from 'rxjs';
 import { ILogin } from '../_models/ILogin';
 import { IRegister } from '../_models/IRegister';
@@ -14,20 +15,20 @@ export class AccountService {
   userKey = 'user';
   currentUser$ = this._currentUserSource.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private toastr: ToastrService) {}
 
   login = (model: ILogin) => {
     return this.http
       .post<User>(`${this.baseUrl}/accounts/login`, model)
-      .pipe(map(this.setUserInLocalStorage))
-      .pipe(catchError(this.handleErrors));
+      .pipe(map(this.setUserInLocalStorage));
+    // .pipe(catchError(this.handleErrors));
   };
 
   register = (model: IRegister) => {
     return this.http
       .post<User>(`${this.baseUrl}/accounts/register`, model)
-      .pipe(map(this.setUserInLocalStorage))
-      .pipe(catchError(this.handleErrors));
+      .pipe(map(this.setUserInLocalStorage));
+    // .pipe(catchError(this.handleErrors));
   };
 
   logout = () => {
@@ -48,19 +49,19 @@ export class AccountService {
     return user;
   };
 
-  private handleErrors(error: HttpErrorResponse) {
-    if (error.status === 0) {
-      console.error('An error occurred: ', error.error);
-    } else {
-      console.error(
-        `Backend returned code ${error.status}, body was`,
-        error.error
-      );
-      console.error(error);
-    }
+  // private handleErrors = (error: HttpErrorResponse) => {
+  //   if (error.status === 0) {
+  //     console.error('An error occurred: ', error.error);
+  //   } else {
+  //     console.error(
+  //       `Backend returned code ${error.status}, body was`,
+  //       error.error
+  //     );
+  //     console.error(error);
+  //   }
 
-    return throwError(
-      () => new Error('Something bad happened; please try again later.')
-    );
-  }
+  //   return throwError(
+  //     () => new Error('Something bad happened; please try again later.')
+  //   );
+  // };
 }
