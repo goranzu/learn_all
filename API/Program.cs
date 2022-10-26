@@ -1,3 +1,5 @@
+using API.Data;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 
@@ -5,7 +7,7 @@ namespace API
 {
     public class Program
     {
-        public static int Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -16,10 +18,25 @@ namespace API
             try
             {
                 Log.Information("Starting web host");
-                CreateHostBuilder(args)
+                var host = CreateHostBuilder(args)
                     .UseSerilog()
-                    .Build()
-                    .Run();
+                    .Build();
+                // .Run();
+
+                using var scope = host.Services.CreateScope();
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<DataContext>();
+                    await context.Database.MigrateAsync();
+                    await Seed.SeedUsers(context);
+                }
+                catch (Exception e)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(e, "Error occured when seeding the data");
+                }
+                await host.RunAsync();
                 return 0;
             }
             catch (Exception ex)

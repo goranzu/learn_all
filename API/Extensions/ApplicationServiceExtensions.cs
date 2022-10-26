@@ -1,4 +1,6 @@
 ﻿using API.Data;
+using API.Data.Repositories;
+using API.Profiles;
 using API.Services.Tokens;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +12,9 @@ public static class ApplicationServiceExtensions
     {
         services.AddTransient<ITokenService, TokenService>();
         services.AddDbContext<DataContext>(options => { options.UseSqlite(config.GetConnectionString("Default")); });
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddAutoMapper(
+            typeof(AutoMapperProfiles).Assembly);
         return services;
     }
 }

@@ -32,12 +32,11 @@ public class AccountsController : BaseController
 
         using var hmac = new HMACSHA512();
 
-        var user = new AppUser()
-        {
-            Username = request.Username.ToLower(),
-            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.Password)),
-            PasswordSalt = hmac.Key
-        };
+        var user = new AppUser(
+            request.Username.ToLower(),
+            hmac.ComputeHash(Encoding.UTF8.GetBytes(request.Password)),
+            hmac.Key,
+            "m");
 
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
@@ -46,7 +45,7 @@ public class AccountsController : BaseController
 
         var response = new UserDto
         {
-            Username = user.Username,
+            Username = user.UserName,
             Token = token
         };
 
@@ -57,7 +56,7 @@ public class AccountsController : BaseController
     public async Task<ActionResult<UserDto>> Login(LoginDto request)
     {
         var user = await _context.Users
-            .FirstOrDefaultAsync(u => u.Username == request.Username);
+            .FirstOrDefaultAsync(u => u.UserName == request.Username);
         if (user is null)
         {
             return Unauthorized("Invalid username and password combination.");
@@ -78,7 +77,7 @@ public class AccountsController : BaseController
 
         var response = new UserDto
         {
-            Username = user.Username,
+            Username = user.UserName,
             Token = token
         };
 
@@ -87,6 +86,6 @@ public class AccountsController : BaseController
 
     private async Task<bool> UserExists(string username)
     {
-        return await _context.Users.AnyAsync(u => u.Username == username.ToLower());
+        return await _context.Users.AnyAsync(u => u.UserName == username.ToLower());
     }
 }
