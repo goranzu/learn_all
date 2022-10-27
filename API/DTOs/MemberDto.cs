@@ -8,7 +8,7 @@ public class MemberDto
     public string Username { get; set; } = null!;
     public string PhotoUrl { get; set; } = null!;
     public int Age { get; set; }
-    public string? KnowAs { get; set; }
+    public string? KnownAs { get; set; }
     public DateTime CreatedAt { get; set; } 
     public DateTime LastActive { get; set; }
     public string Gender { get; set; } = null!;

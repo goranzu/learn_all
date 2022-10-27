@@ -1,7 +1,8 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, map, ReplaySubject, throwError } from 'rxjs';
+import { map, ReplaySubject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { ILogin } from '../_models/ILogin';
 import { IRegister } from '../_models/IRegister';
 import { User } from '../_models/user';
@@ -10,7 +11,7 @@ import { User } from '../_models/user';
   providedIn: 'root',
 })
 export class AccountService {
-  private baseUrl = 'https://localhost:5001/api';
+  private baseUrl = environment.apiUrl;
   private _currentUserSource = new ReplaySubject<User | null>(1);
   userKey = 'user';
   currentUser$ = this._currentUserSource.asObservable();
